@@ -1,8 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-
-// Leave empty when React is served by Flask. For a separate host (Vercel, etc.),
-// set VITE_API_BASE_URL to the public Flask/Render URL.
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+import { analyzeVideo } from './services/api';
 
 function AnalysisModal({ analysis, onClose }) {
   if (!analysis) return null;
@@ -73,32 +70,13 @@ export default function App() {
   }
 
   async function analyzeRecording() {
-    const form = new FormData();
-    form.append('video', new Blob(chunksRef.current, { type: 'video/webm' }), 'session.webm');
-
     try {
-      const response = await fetch(`${API_BASE_URL}/api/analyze`, { method: 'POST', body: form });
-      const text = await response.text();
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch {
-        throw new Error(`Endpoint mengembalikan HTTP ${response.status}`);
-      }
-      if (!response.ok) {
-        if (response.status === 403) {
-          throw new Error('Akses API ditolak (403). Pastikan VITE_API_BASE_URL mengarah ke backend Flask/Render.');
-        }
-        throw new Error(data.message || data.error || `HTTP ${response.status}`);
-      }
-      if (!data.predictions) throw new Error(data.message || 'Hasil analisis belum tersedia.');
+      const videoBlob = new Blob(chunksRef.current, { type: 'video/webm' });
+      const data = await analyzeVideo(videoBlob);
       setAnalysis(data);
       setStatus('Analisis berhasil. Hasil rekap siap dilihat.');
     } catch (error) {
-      const message = error instanceof TypeError
-        ? 'Backend tidak dapat dihubungi. Pastikan Flask/Render aktif dan VITE_API_BASE_URL mengarah ke URL backend yang benar.'
-        : error.message;
-      setStatus(`Gagal menganalisis video: ${message}`);
+      setStatus(`Gagal menganalisis video: ${error.message}`);
     }
   }
 
