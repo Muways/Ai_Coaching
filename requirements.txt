@@ -1,0 +1,9 @@
+Flask==3.1.0
+gunicorn==23.0.0
+# Required by the next pipeline stage (video landmarks -> 90x14 features).
+opencv-python-headless==4.11.0.86
+mediapipe==0.10.21
+numpy==1.26.4
+scikit-learn==1.6.1
+h5py==3.14.0
+tensorflow==2.19.0
