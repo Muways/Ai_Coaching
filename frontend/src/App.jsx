@@ -84,8 +84,7 @@ export default function App() {
     <>
       <main>
         <p className="eyebrow">AI Presentation Coach</p>
-        <h1>Latih presentasimu dengan percaya diri</h1>
-        <p className="intro">Rekam sesi latihan dan dapatkan rekap analisis gerakan serta postur tubuhmu.</p>
+        <h1>Practice your presentation with confidence</h1>
         <video ref={videoRef} autoPlay muted playsInline />
         <div className="controls">
           <button type="button" onClick={startCamera} disabled={cameraReady}>Mulai kamera</button>
